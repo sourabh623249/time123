@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Difference Calculator</title>
+    <style>
+        /* Styling for fonts and background */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .time-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+            text-align: left;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            margin-left: 10px;
+        }
+
+        input[type="number"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 500;
+            box-shadow: 0px 10px 15px rgba(0, 123, 255, 0.2);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0px 12px 18px rgba(0, 123, 255, 0.3);
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer strong {
+            color: #007bff;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 500px) {
+            .container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+
+            input[type="number"] {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Time Difference Calculator</h1>
+
+        <div class="time-input">
+            <label for="startHour">Start Hour:</label>
+            <input type="number" id="startHour" min="1" max="12" placeholder="Hour" required>
+        </div>
+
+        <div class="time-input">
+            <label for="startMinute">Start Minute:</label>
+            <input type="number" id="startMinute" min="0" max="59" placeholder="Minute" required>
+        </div>
+
+        <div class="time-input">
+            <label for="endHour">End Hour:</label>
+            <input type="number" id="endHour" min="1" max="12" placeholder="Hour" required>
+        </div>
+
+        <div class="time-input">
+            <label for="endMinute">End Minute:</label>
+            <input type="number" id="endMinute" min="0" max="59" placeholder="Minute" required>
+        </div>
+
+        <button onclick="calculateDifference()">Calculate Difference</button>
+
+        <p id="result"></p>
+
+        <div class="footer">
+            <p>Created by <strong>Sourabh</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function convertTo24Hour(hour, minute) {
+            if (hour < 1 || hour > 12 || minute < 0 || minute >= 60) {
+                return null;  // Invalid input
+            }
+            return { hour, minute };
+        }
+
+        function calculateDifference() {
+            let startHour = parseInt(document.getElementById('startHour').value);
+            let startMinute = parseInt(document.getElementById('startMinute').value);
+            let endHour = parseInt(document.getElementById('endHour').value);
+            let endMinute = parseInt(document.getElementById('endMinute').value);
+
+            if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) {
+                document.getElementById('result').innerText = "Please fill in all fields correctly.";
+                return;
+            }
+
+            let startTime = convertTo24Hour(startHour, startMinute);
+            let endTime = convertTo24Hour(endHour, endMinute);
+
+            if (!startTime || !endTime) {
+                document.getElementById('result').innerText = "Invalid time format.";
+                return;
+            }
+
+            let startTotalMinutes = startTime.hour * 60 + startTime.minute;
+            let endTotalMinutes = endTime.hour * 60 + endTime.minute;
+
+            // Auto-detect whether AM or PM should be applied
+            if (endTotalMinutes <= startTotalMinutes) {
+                endTotalMinutes += 12 * 60;  // Add 12 hours to shift to the next period (AM to PM or PM to next AM)
+            }
+
+            let differenceMinutes = endTotalMinutes - startTotalMinutes;
+            let hoursDifference = Math.floor(differenceMinutes / 60);
+            let minutesDifference = differenceMinutes % 60;
+
+            document.getElementById('result').innerText = `Time Difference: ${hoursDifference} hour(s) and ${minutesDifference} minute(s)`;
+        }
+    </script>
+
+</body>
+</html>
